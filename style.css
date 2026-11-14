@@ -106,3 +106,41 @@ button,a{-webkit-tap-highlight-color:transparent}
 .later>:nth-child(3){animation-delay:.2s}
 .later>:nth-child(4){animation-delay:.3s}
 .later>:nth-child(5){animation-delay:.4s}
+
+/* review */
+.fld{display:block;width:100%;margin-bottom:12px;padding:12px 14px;border:2px solid var(--ink);border-radius:12px;background:#fff;color:var(--ink);font:inherit;transition:box-shadow .15s,transform .15s,background .15s}
+.fld:focus{outline:none;background:#FFFBEA;box-shadow:var(--sh);transform:translate(-2px,-2px)}
+textarea.fld{resize:vertical;min-height:90px}
+.stars{display:flex;gap:6px;margin-bottom:14px}
+.star{background:none;border:0;padding:2px 4px;font-size:2.1rem;line-height:1;color:#E6DCC3;-webkit-text-stroke:2px var(--ink);transition:transform .2s cubic-bezier(.3,1.5,.5,1),color .15s}
+.star.on{color:var(--y);animation:pop .3s}
+.star:active{transform:scale(.8)}
+@keyframes pop{50%{transform:scale(1.35) rotate(-8deg)}}
+@media(hover:hover){.star:hover{transform:scale(1.2) rotate(-8deg)}}
+.hp{position:absolute;left:-9999px;opacity:0;height:0;width:0}
+.card .err{color:#C0264B;font-weight:700;font-size:.92rem;margin:-2px 0 10px}
+.err:empty{display:none}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.thanks{background:var(--m)}
+.thanks p{color:var(--ink)}
+
+/* review publik */
+.rv-i{padding:14px 0;border-top:2px dashed var(--ink);animation:in .45s cubic-bezier(.2,.8,.2,1) backwards}
+.rv-i:first-child{border-top:0;padding-top:4px}
+.rv-h{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.rv-s{color:#F5B700;letter-spacing:2px;white-space:nowrap}
+.card .rv-i p{color:var(--ink);margin:4px 0;overflow-wrap:anywhere}
+.rv-i small{color:var(--mute)}
+#rlist .sk{border-radius:14px}
+
+/* pilihan samarkan nama */
+.chk{display:flex;align-items:center;gap:10px;margin:0 0 6px;cursor:pointer;font-weight:600;font-size:.95rem;user-select:none}
+.chk input{position:absolute;opacity:0;width:0;height:0}
+.chk .box{flex:none;display:grid;place-items:center;width:26px;height:26px;border:2px solid var(--ink);border-radius:8px;background:#fff;transition:background .15s,transform .2s cubic-bezier(.3,1.5,.5,1)}
+.chk .box::after{content:"✓";font-weight:800;transform:scale(0);transition:transform .2s cubic-bezier(.3,1.5,.5,1)}
+.chk input:checked+.box{background:var(--m)}
+.chk input:checked+.box::after{transform:scale(1)}
+.chk input:focus-visible+.box{outline:3px solid var(--ink);outline-offset:3px}
+.chk:active .box{transform:scale(.85)}
+.card .prev{font-size:.88rem;margin:0 0 12px}

@@ -1,6 +1,9 @@
 (function () {
   "use strict";
 
+  // URL web app Google Apps Script untuk menampung review (lihat README). Kosong = fitur kirim belum aktif.
+  var REVIEW_URL = "https://script.google.com/macros/s/AKfycbw-MOTVej-cqJjYpNOMnf9Z4CQ_EbUDe7vedLoc8ZdZj_Vwpnp5vRuTrb03_r93s-5O/exec";
+
   // 4 kelompok keahlian (KK), tiap KK punya 4 peran
   var KK = ["Software Engineering", "AI & Machine Learning", "Network & Security", "Information System"];
 
@@ -195,6 +198,42 @@
     setTimeout(result, RM ? 0 : 1500);
   }
 
+  // samarkan nama: huruf pertama dan terakhir, sisanya *
+  function mask(n) {
+    var a = Array.from(String(n).trim());
+    if (a.length < 2) return "*";
+    if (a.length === 2) return a[0] + "*";
+    return a[0] + "*".repeat(a.length - 2) + a[a.length - 1];
+  }
+
+  function item(o, n) {
+    var d = document.createElement("div"), h = document.createElement("div"), b = document.createElement("b"), st = document.createElement("span"), m = document.createElement("small");
+    d.className = "rv-i"; d.style.animationDelay = (n || 0) * 60 + "ms";
+    h.className = "rv-h"; b.textContent = o.nama;
+    st.className = "rv-s"; st.setAttribute("aria-label", "Rating " + o.rating + " dari 5");
+    st.textContent = o.rating ? "★".repeat(o.rating) + "☆".repeat(5 - o.rating) : "";
+    h.appendChild(b); h.appendChild(st); d.appendChild(h);
+    if (o.saran) { var p = document.createElement("p"); p.textContent = o.saran; d.appendChild(p); }
+    var t = new Date(o.waktu);
+    m.textContent = [o.peran, isNaN(t) ? "" : t.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })].filter(Boolean).join(" · ");
+    d.appendChild(m);
+    return d;
+  }
+
+  function loadReviews() {
+    fetch(REVIEW_URL).then(function (r) { return r.json(); }).then(function (a) {
+      var box = document.getElementById("rlist");
+      if (!box) return;
+      box.innerHTML = "";
+      if (!a.length) { box.innerHTML = "<p>Belum ada review. Jadi yang pertama!</p>"; return; }
+      a.forEach(function (o, n) { box.appendChild(item(o, n)); });
+    }).catch(function (err) {
+      console.warn("Review gagal dimuat:", err);
+      var box = document.getElementById("rlist");
+      if (box) box.innerHTML = "<p>Review belum bisa dimuat. Coba muat ulang halaman.</p>";
+    });
+  }
+
   function result() {
     var keys = Object.keys(R);
     var rs = keys.map(function (k) { return { k: k, s: sc[k], pct: Math.round(100 * sc[k] / MAX[k]) }; });
@@ -228,12 +267,66 @@
       '<div class="g2"><div class="card glass"><h3>Kecocokan tiap kelompok</h3>' + kkRows + '</div>' +
       '<div class="card glass"><h3>Mulai dari sini</h3><ol>' + p.s.map(function (x) { return "<li>" + x + "</li>"; }).join("") + '</ol></div></div>' +
       '<div class="card glass"><h3>Peran lain yang dekat denganmu</h3>' + altRows + '<p style="margin-top:6px">Masih ragu? Kerjakan langkah pertama dari masing-masing peran, lalu lihat mana yang membuatmu betah.</p></div>' +
+      '<div class="card glass" id="rv"><h3>Kasih saran buat tes ini</h3><p style="margin-bottom:12px">Tes ini masih dikembangkan. Kritik dan sarannya sangat membantu.</p>' +
+      '<div class="stars" role="group" aria-label="Rating">' + [1, 2, 3, 4, 5].map(function (n) { return '<button type="button" class="star" data-n="' + n + '" aria-label="' + n + ' dari 5">★</button>'; }).join("") + '</div>' +
+      '<input class="fld" id="rn" placeholder="Namamu (wajib)" maxlength="40" autocomplete="name">' +
+      '<label class="chk"><input type="checkbox" id="rm" checked><span class="box"></span><span>Samarkan namaku di daftar review</span></label>' +
+      '<p class="prev" id="rprev"></p>' +
+      '<textarea class="fld" id="rs" rows="3" maxlength="500" placeholder="Saran atau kesanmu soal tes ini..."></textarea>' +
+      '<input class="hp" id="rh" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+      '<p class="err" id="rerr" role="alert"></p><button class="go" id="rsend" type="button">Kirim</button></div>' +
+      (REVIEW_URL ? '<div class="card glass" id="rl"><h3>Kata teman-teman</h3><div id="rlist"><div class="sk" style="height:76px;margin-bottom:12px"></div><div class="sk" style="height:76px"></div></div></div>' : '') +
       '<div class="acts"><button class="go" id="cp">Salin hasil</button><button class="ghost" id="re">Ulangi tes</button></div></div></section>';
 
     setTimeout(function () {
       document.getElementById("later").classList.add("on");
       app.querySelectorAll(".track i").forEach(function (e) { e.style.width = e.dataset.w + "%"; });
     }, RM ? 0 : 150);
+
+    if (REVIEW_URL) loadReviews();
+
+    // review: nama wajib, rating atau saran minimal satu
+    var rating = 0, stars = app.querySelectorAll(".star"), rn = document.getElementById("rn"),
+        rs = document.getElementById("rs"), er = document.getElementById("rerr"), sb = document.getElementById("rsend");
+    stars.forEach(function (st) {
+      st.onclick = function () {
+        rating = +st.dataset.n;
+        stars.forEach(function (x, k) { x.classList.remove("on"); if (k < rating) { void x.offsetWidth; x.classList.add("on"); } });
+      };
+    });
+    var rm = document.getElementById("rm"), rpv = document.getElementById("rprev");
+    function prev() {
+      var n = rn.value.trim();
+      rpv.textContent = n ? "Akan tampil sebagai: " + (rm.checked ? mask(n) : n) : "Isi nama untuk melihat tampilannya.";
+    }
+    rn.oninput = prev; rm.onchange = prev; prev();
+
+    function bad(m, el) {
+      er.textContent = m;
+      if (el) { el.focus(); el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
+    }
+    sb.onclick = function () {
+      var nm = rn.value.trim(), sr = rs.value.trim();
+      if (document.getElementById("rh").value) return;
+      if (!nm) { bad("Isi namamu dulu ya.", rn); return; }
+      if (!sr && !rating) { bad("Isi rating atau sarannya dulu ya.", rs); return; }
+      if (!REVIEW_URL) { bad("Fitur kirim belum aktif."); return; }
+      er.textContent = "";
+      sb.disabled = true; sb.textContent = "Mengirim...";
+      fetch(REVIEW_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ nama: nm, rating: rating, saran: sr, kk: KK[tk.a], peran: p.n, samar: rm.checked }) })
+        .then(function () {
+          var c = document.getElementById("rv");
+          c.innerHTML = "<h3></h3><p>Sarannya sudah masuk. Terima kasih sudah ikut mencoba.</p>";
+          c.firstChild.textContent = "Makasih, " + nm + "!";
+          c.classList.add("thanks");
+          var lb = document.getElementById("rlist");
+          if (lb && !lb.querySelector(".sk")) {
+            if (!lb.querySelector(".rv-i")) lb.innerHTML = "";
+            lb.insertBefore(item({ nama: rm.checked ? mask(nm) : nm, rating: rating, saran: sr, peran: p.n, waktu: new Date().toISOString() }), lb.firstChild);
+          }
+        }, function () { bad("Gagal mengirim. Coba lagi ya."); sb.disabled = false; sb.textContent = "Kirim"; });
+    };
 
     var cp = document.getElementById("cp");
     cp.onclick = function () {
