@@ -1,0 +1,2 @@
+// Isi dengan URL web app Google Apps Script (berakhiran /exec). File ini terpisah supaya URL tidak hilang saat script.js diganti.
+window.REVIEW_URL = "https://script.google.com/macros/s/AKfycbzrJSIUslCdGZHIPQKlGlKWGiGmNsczTHBdPRSWlAD-4DayyBjfifMbKiZ9N7ppchdP/exec";

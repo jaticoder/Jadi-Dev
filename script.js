@@ -1,8 +1,8 @@
 (function () {
   "use strict";
 
-  // URL web app Google Apps Script untuk menampung review (lihat README). Kosong = fitur kirim belum aktif.
-  var REVIEW_URL = "https://script.google.com/macros/s/AKfycbwo9Y7fX_sEaFQz7-_r8TG5lDk9FnIDmEPjChZgO0W6SbD0bVL4QYiI3XrnXB3kbRZK/exec";
+  // URL web app Google Apps Script untuk review diisi di config.js (lihat README). Kosong = fitur review nonaktif.
+  var REVIEW_URL = window.REVIEW_URL || "";
 
   // 4 kelompok keahlian (KK), tiap KK punya 4 peran
   var KK = ["Software Engineering", "AI & Machine Learning", "Network & Security", "Information System"];
