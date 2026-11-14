@@ -209,7 +209,7 @@
     var alts = rs.filter(function (r) { return r.k !== top.k; }).sort(byPct).slice(0, 2);
 
     var kkRows = ks.slice().sort(function (x, y) { return y.s - x.s; }).map(function (o) {
-      return '<div class="alt k"><span' + (o.a === tk.a ? ' style="color:#fff;font-weight:800"' : "") + '>' + KK[o.a] + '</span><div class="track"><i data-w="' + o.pct + '"></i></div><b>' + o.pct + '%</b></div>';
+      return '<div class="alt k"><span' + (o.a === tk.a ? ' style="font-weight:700"' : "") + '>' + KK[o.a] + '</span><div class="track"><i data-w="' + o.pct + '"></i></div><b>' + o.pct + '%</b></div>';
     }).join("");
     var altRows = alts.map(function (o) {
       return '<div class="alt k"><span>' + R[o.k].n + '<small> · ' + KK[R[o.k].k] + '</small></span><div class="track"><i data-w="' + o.pct + '"></i></div><b>' + o.pct + '%</b></div>';
