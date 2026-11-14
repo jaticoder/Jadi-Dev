@@ -176,6 +176,7 @@
     if (!box || box.classList.contains("lock")) return;
     var w = Q[i][1][+b.dataset.i][1];
     box.classList.add("lock");
+    if (navigator.vibrate && !RM) navigator.vibrate(12);
     b.classList.add("picked");
     for (var k in w) sc[k] += w[k];
     hist.push(w);
@@ -254,7 +255,15 @@
 
   // ripple klik
   document.addEventListener("pointerdown", function (e) {
-    var t = e.target.closest && e.target.closest(".go,.ghost,.opt");
+    var t = e.target.closest && e.target.closest(".go,.ghost,.opt,.card,.axes li");
+    var g = e.target.closest && e.target.closest(".glass");
+    if (g && !RM) {
+      var gb = g.getBoundingClientRect();
+      g.style.setProperty("--mx", (e.clientX - gb.left) + "px");
+      g.style.setProperty("--my", (e.clientY - gb.top) + "px");
+      g.classList.add("tap");
+      setTimeout(function () { g.classList.remove("tap"); }, 450);
+    }
     if (!t || RM) return;
     var b = t.getBoundingClientRect(), r = document.createElement("span");
     r.className = "rp";
