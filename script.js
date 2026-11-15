@@ -45,6 +45,41 @@
       s: ["Hari 1-2: belajar Figma dan dasar tata letak.", "Hari 3-5: rancang ulang satu aplikasi yang menurutmu membingungkan.", "Akhir pekan: uji ke tiga orang dan catat bagian yang membuat mereka bingung."] }
   };
 
+  // warna per KK, rotasi kecil per peran biar tiap karakter sedikit beda pose, ikon 0-40 per peran
+  var COL = ["var(--b)", "var(--p)", "var(--m)", "var(--y)"];
+  var ROT = { fe: -3, be: 2, mob: -2, gm: 4, ml: -2, ds: 3, cv: -4, nlp: 2, pen: 3, sec: -2, net: 4, cld: -3, ba: 2, dbe: -3, pm: 3, ux: -2 };
+  var ICON = {
+    fe: '<rect x="4" y="6" width="32" height="24" rx="3"/><line x1="4" y1="14" x2="36" y2="14"/><circle cx="9" cy="10" r="1.4" fill="var(--ink)"/><circle cx="14" cy="10" r="1.4" fill="var(--ink)"/>',
+    be: '<rect x="8" y="4" width="24" height="8" rx="2"/><rect x="8" y="16" width="24" height="8" rx="2"/><rect x="8" y="28" width="24" height="8" rx="2"/><circle cx="13" cy="8" r="1.3" fill="var(--ink)"/><circle cx="13" cy="20" r="1.3" fill="var(--ink)"/><circle cx="13" cy="32" r="1.3" fill="var(--ink)"/>',
+    mob: '<rect x="12" y="2" width="16" height="36" rx="4"/><line x1="17" y1="32" x2="23" y2="32"/>',
+    gm: '<path d="M9 18c0-6 4-10 10-10h2c6 0 10 4 10 10v6c0 5-3 8-8 8-3 0-3-3-7-3s-4 3-7 3c-5 0-10-3-10-8v-6z"/><circle cx="28" cy="16" r="1.5" fill="var(--ink)"/><circle cx="32" cy="20" r="1.5" fill="var(--ink)"/><line x1="11" y1="18" x2="11" y2="23"/><line x1="8.5" y1="20.5" x2="13.5" y2="20.5"/>',
+    ml: '<rect x="11" y="11" width="18" height="18" rx="2"/><line x1="15" y1="4" x2="15" y2="11"/><line x1="20" y1="4" x2="20" y2="11"/><line x1="25" y1="4" x2="25" y2="11"/><line x1="15" y1="29" x2="15" y2="36"/><line x1="20" y1="29" x2="20" y2="36"/><line x1="25" y1="29" x2="25" y2="36"/>',
+    ds: '<line x1="6" y1="34" x2="34" y2="34"/><rect x="9" y="22" width="6" height="12"/><rect x="17" y="14" width="6" height="20"/><rect x="25" y="6" width="6" height="28"/>',
+    cv: '<path d="M4 20s7-11 16-11 16 11 16 11-7 11-16 11S4 20 4 20z"/><circle cx="20" cy="20" r="5" fill="var(--ink)" stroke="none"/>',
+    nlp: '<path d="M5 7h30v17H17l-6 6v-6H5z"/>',
+    pen: '<circle cx="16" cy="16" r="10"/><line x1="24" y1="24" x2="34" y2="34"/>',
+    sec: '<path d="M20 4l13 5v9c0 9-6 16-13 18-7-2-13-9-13-18V9z"/><path d="M14 19l4 4 8-8" fill="none"/>',
+    net: '<path d="M6 18a20 20 0 0128 0" fill="none"/><path d="M12 24a12 12 0 0116 0" fill="none"/><circle cx="20" cy="30" r="2.2" fill="var(--ink)" stroke="none"/>',
+    cld: '<path d="M11 28a6 6 0 01-1-12 9 9 0 0117-2 7 7 0 015 7 6 6 0 01-2 7z"/>',
+    ba: '<rect x="8" y="5" width="24" height="29" rx="3"/><rect x="14" y="2" width="12" height="6" rx="2"/><line x1="12" y1="16" x2="28" y2="16"/><line x1="12" y1="22" x2="28" y2="22"/><line x1="12" y1="28" x2="22" y2="28"/>',
+    dbe: '<ellipse cx="20" cy="9" rx="11" ry="4"/><path d="M9 9v18c0 2 5 4 11 4s11-2 11-4V9"/><path d="M9 18c0 2 5 4 11 4s11-2 11-4" fill="none"/>',
+    pm: '<rect x="6" y="6" width="28" height="28" rx="3"/><line x1="6" y1="14" x2="34" y2="14"/><line x1="13" y1="2" x2="13" y2="9"/><line x1="27" y1="2" x2="27" y2="9"/><path d="M13 22l3 3 7-7" fill="none"/>',
+    ux: '<path d="M8 32l3-10 17-17 7 7-17 17z"/><line x1="25" y1="8" x2="32" y2="15"/>'
+  };
+
+  // karakter hasil: blob diwarnai per KK, muka sama, lencana ikon beda tiap 16 peran
+  function mascot(role) {
+    return '<div class="rchar" style="transform:rotate(' + ROT[role] + 'deg)">' +
+      '<svg viewBox="0 0 160 160" aria-hidden="true">' +
+      '<rect x="6" y="6" width="148" height="148" rx="38" fill="' + COL[R[role].k] + '" stroke="var(--ink)" stroke-width="4"/>' +
+      '<circle cx="58" cy="66" r="7" fill="var(--ink)"/><circle cx="102" cy="66" r="7" fill="var(--ink)"/>' +
+      '<path d="M58 92q22 16 44 0" fill="none" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>' +
+      '<g transform="translate(100,100)">' +
+      '<rect width="56" height="56" rx="14" fill="#fff" stroke="var(--ink)" stroke-width="3"/>' +
+      '<g transform="translate(8,8)" fill="#fff" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">' + ICON[role] + '</g>' +
+      '</g></svg></div>';
+  }
+
   // [skenario, [[jawaban, "peran+bobot ..."], ...]]
   var Q = [
     ["Minggu kosong, nggak ada kuliah. Kamu paling mungkin ngapain?", [
@@ -257,11 +292,13 @@
 
     app.innerHTML =
       '<section class="stage"><span class="script">Hasilmu</span>' +
+      '<div class="rhead"><div class="rhead-txt">' +
       '<p class="who" style="margin:0">Kelompok keahlian yang paling cocok</p>' +
       '<h2 class="grad" style="font-size:clamp(2rem,7vw,3.4rem)">' + KK[tk.a] + '</h2>' +
       '<p class="lead" style="margin:6px 0 0">' + KD[tk.a] + '</p>' +
       '<p class="who">Peran spesifikmu: <b>' + p.n + '</b>, kecocokan ' + top.pct + '%.</p>' +
       '<p class="lead" style="margin-bottom:0">' + p.l + '</p>' +
+      '</div>' + mascot(top.k) + '</div>' +
       '<div class="later" id="later">' +
       '<div class="card glass"><h3>Bisa bekerja sebagai</h3><div class="chips">' + p.j.map(function (x) { return "<span>" + x + "</span>"; }).join("") + '</div></div>' +
       '<div class="g2"><div class="card glass"><h3>Kecocokan tiap kelompok</h3>' + kkRows + '</div>' +
